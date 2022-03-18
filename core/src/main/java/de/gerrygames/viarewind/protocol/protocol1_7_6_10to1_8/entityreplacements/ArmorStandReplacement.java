@@ -34,6 +34,8 @@ public class ArmorStandReplacement implements EntityReplacement {
 	private boolean small = false;
 	private boolean marker = false;
 
+	private boolean firstTeleport = true;
+
 	public int getEntityId() {
 		return this.entityId;
 	}
@@ -177,10 +179,17 @@ public class ArmorStandReplacement implements EntityReplacement {
 		attach.write(Type.INT, entityIds[0]);
 		attach.write(Type.BOOLEAN, false);
 
-		PacketUtil.sendPacket(detach, Protocol1_7_6_10TO1_8.class, true, true);
+		// Scorpio Start - make sure that we don't detach if it hasn't been attached before...
+		if (!firstTeleport) {
+			PacketUtil.sendPacket(detach, Protocol1_7_6_10TO1_8.class, true, true);
+		}
+
 		PacketUtil.sendPacket(teleportSkull, Protocol1_7_6_10TO1_8.class, true, true);
 		PacketUtil.sendPacket(teleportHorse, Protocol1_7_6_10TO1_8.class, true, true);
 		PacketUtil.sendPacket(attach, Protocol1_7_6_10TO1_8.class, true, true);
+
+		firstTeleport = false;
+		// Scorpio End
 	}
 
 	public void updateMetadata() {
